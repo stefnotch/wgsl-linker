@@ -26,7 +26,7 @@ import {
   SimpleSegment,
   Wildcard,
 } from "./ImportTree.js";
-import { digits, eol, word } from "./MatchWgslD.js";
+import { digits, eol, ident } from "./MatchWgslD.js";
 import { makeElem } from "./ParseSupport.js";
 
 const gleamImportSymbolSet = "/ { } , ( ) .. . * ;";
@@ -44,7 +44,7 @@ const ws = /\s+/;
 export const gleamImportTokens = tokenMatcher({
   ws,
   gleamImportSymbol,
-  word,
+  word: ident,
   digits,
 });
 

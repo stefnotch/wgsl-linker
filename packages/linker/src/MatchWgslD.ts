@@ -13,7 +13,7 @@ const symbol = matchOneOf(symbolSet);
 const quote = /["']/;
 
 const longIdent = /[a-zA-Z_][\w.:]*/; // identifier that can include module path
-export const word = /[a-zA-Z_]\w*/; // LATER consider making this 'ident' per wgsl spec (incl. non-ascii)
+export const ident = /([_\p{XID_Start}][\p{XID_Continue}]+)|([\p{XID_Start}])/u;
 export const digits = /(?:0x)?[\d.]+[iuf]?/; // LATER parse more wgsl number variants
 
 /** matching tokens at wgsl root level */
@@ -21,7 +21,7 @@ export const mainTokens = tokenMatcher(
   {
     directive,
     attr: /@[a-zA-Z_]\w*/,
-    word,
+    word: ident,
     digits,
     symbol,
     quote,
@@ -76,16 +76,22 @@ export const argsTokens = tokenMatcher(
 const treeImportSymbolSet = ":: { } , ( ) _ . ; *";
 const importSymbol = matchOneOf(treeImportSymbolSet);
 
-export const treeImportTokens = tokenMatcher({
-  directive,
-  quote,
-  ws: /\s+/,
-  importSymbol,
-  word,
-  digits,
-}, "treeTokens");
+export const treeImportTokens = tokenMatcher(
+  {
+    directive,
+    quote,
+    ws: /\s+/,
+    importSymbol,
+    word: ident,
+    digits,
+  },
+  "treeTokens"
+);
 
-export const rootWs = tokenMatcher({
-  blanks: /\s+/,
-  other: /[^\s]+/
-}, "rootWs");
+export const rootWs = tokenMatcher(
+  {
+    blanks: /\s+/,
+    other: /[^\s]+/,
+  },
+  "rootWs"
+);
